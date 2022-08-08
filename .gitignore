@@ -1,5 +1,3 @@
-**/backend.tf
-**/provider.tf
 **/terragrunt_variables.tf
 **/.terraform.lock.hcl
 **/*.zip
