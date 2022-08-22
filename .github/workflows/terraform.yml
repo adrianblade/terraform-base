@@ -11,6 +11,7 @@ permissions:
 env:
   TG_VERSION: v0.38.6
   TF_VERSION: 1.2.5
+  CODE_DIR: dev/services/codely
 
 jobs:
   terraform:
@@ -40,24 +41,24 @@ jobs:
     - name: Verify Terragrunt version
       run: terragrunt --version
       
-    - name: Terraform init
+    - name: Terragrunt init
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: cd dev/services/codely-sqs && terragrunt init -input=false -reconfigure
+      run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
       
-    - name: Terraform validation
-      run: cd dev/services/codely-sqs && terragrunt validate
+    - name: Terragrunt validation
+      run: terragrunt validate --terragrunt-working-dir $CODE_DIR
       
-    - name: Terraform plan
+    - name: Terragrunt plan
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: cd dev/services/codely-sqs && terragrunt plan
+      run: terragrunt plan --terragrunt-working-dir $CODE_DIR
 
     # - name: Terraform apply
     #   env:
     #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #   run: cd dev/services/codely-sqs && terragrunt apply -auto-approve -input=false
+    #   run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir $CODE_DIR
     
