@@ -32,7 +32,7 @@ jobs:
       run: |
        curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.6/terragrunt_linux_amd64
        chmod +x terragrunt
-       mv terragrunt /bin
+       sudo mv terragrunt /bin
 
     - name: Verify Terraform version
       run: terragrunt --version
