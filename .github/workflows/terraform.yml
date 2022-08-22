@@ -8,6 +8,10 @@ on:
 
 permissions:
   contents: read
+env:
+  PATH: dev/services/codely-sqs
+  TG_VERSION: v0.38.6
+  TF_VERSION: 1.2.5
 
 jobs:
   terraform:
@@ -30,7 +34,7 @@ jobs:
 
     - name: Install Terragrunt
       run: |
-       curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.6/terragrunt_linux_amd64
+       curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TG_VERSION/terragrunt_linux_amd64
        chmod +x terragrunt
        sudo mv terragrunt /bin
 
@@ -52,9 +56,9 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: cd dev/services/codely-sqs && terragrunt plan
 
-    - name: Terraform apply
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: cd dev/services/codely-sqs && terragrunt apply -auto-approve -input=false
+    # - name: Terraform apply
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #   run: cd dev/services/codely-sqs && terragrunt apply -auto-approve -input=false
     
