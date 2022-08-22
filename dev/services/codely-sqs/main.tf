@@ -6,7 +6,7 @@ resource "aws_sqs_queue" "terraform_queue" {
   receive_wait_time_seconds = 10
 
   tags = {
-    stage       = "dev"
+    stage       = var.stage
     terraform   = "true"
     accountable = "development"
    domain      = "codely"
