@@ -8,6 +8,10 @@ on:
 
 permissions:
   contents: read
+env:
+  TG_VERSION: v0.38.6
+  TF_VERSION: 1.2.5
+  CODE_DIR: dev/services/codely
 
 jobs:
   terraform:
@@ -27,25 +31,34 @@ jobs:
       
     - name: Verify Terraform version
       run: terraform --version
-      
-    - name: Terraform init
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: cd dev/services/codely-sqs && terraform init -input=false -reconfigure
-      
-    - name: Terraform validation
-      run: cd dev/services/codely-sqs && terraform validate
-      
-    - name: Terraform plan
-      env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: cd dev/services/codely-sqs && terraform plan
 
-    - name: Terraform apply
+    - name: Install Terragrunt
+      run: |
+       curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TG_VERSION/terragrunt_linux_amd64
+       chmod +x terragrunt
+       sudo mv terragrunt /bin
+
+    - name: Verify Terragrunt version
+      run: terragrunt --version
+      
+    - name: Terragrunt init
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: cd dev/services/codely-sqs && terraform apply -auto-approve -input=false
+      run: cd dev/services/codely-sqs && terragrunt init -input=false -reconfigure
+      
+    - name: Terragrunt validation
+      run: cd dev/services/codely-sqs && terragrunt validate
+      
+    - name: Terragrunt plan
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      run: cd dev/services/codely-sqs && terragrunt plan
+
+    # - name: Terraform apply
+    #   env:
+    #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+    #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+    #   run: cd dev/services/codely-sqs && terragrunt apply -auto-approve -input=false
     
