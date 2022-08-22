@@ -34,7 +34,7 @@ jobs:
        chmod +x terragrunt
        sudo mv terragrunt /bin
 
-    - name: Verify Terraform version
+    - name: Verify Terragrunt version
       run: terragrunt --version
       
     - name: Terraform init
