@@ -58,6 +58,7 @@ jobs:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       run: cd dev/services/codely-sqs && terragrunt plan
+      
 
     # - name: Terraform apply
     #   env:
