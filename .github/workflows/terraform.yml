@@ -45,20 +45,20 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
+      run: cd dev/services/codely-sqs && terragrunt init -input=false -reconfigure
       
     - name: Terragrunt validation
-      run: terragrunt validate --terragrunt-working-dir $CODE_DIR
+      run: cd dev/services/codely-sqs && terragrunt validate
       
     - name: Terragrunt plan
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: terragrunt plan --terragrunt-working-dir $CODE_DIR
+      run: cd dev/services/codely-sqs && terragrunt plan
 
     # - name: Terraform apply
     #   env:
     #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
     #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-    #   run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir $CODE_DIR
+    #   run: cd dev/services/codely-sqs && terragrunt apply -auto-approve -input=false
     
