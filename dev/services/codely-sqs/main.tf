@@ -9,6 +9,8 @@ resource "aws_sqs_queue" "terraform_queue" {
     stage       = var.stage
     terraform   = "true"
     accountable = "development"
-   domain      = "codely"
+    domain      = "codely"
   }
+
+  provider = aws.mango-test-ireland
 }
