@@ -36,10 +36,14 @@ generate "provider" {
 # This file is managed by `terragrunt.hcl` file from the root folder.
 # Any changes here will be lost.
 
-# aws-mango-test
 provider "aws" {
-# alias  = "aws-mango-test"
+  alias  = "mango-test-ireland"
   region = "eu-west-1"
+}
+
+provider "aws" {
+  alias  = "mango-test-virginia"
+  region = "us-east-1"
 }
 
 EOF
