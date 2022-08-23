@@ -43,11 +43,8 @@ jobs:
     - name: Verify Terragrunt version
       run: terragrunt --version
       
-    - name: Install awscli
-      run: |
-       curl -o awscliv2.zip https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip 
-       unzip awscliv2.zip
-       sudo ./aws/install
+    - name: Verify awscli version
+      run: aws --version
        
     - name: Install checkov
       run: pip3 install checkov
