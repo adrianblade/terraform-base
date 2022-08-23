@@ -47,4 +47,4 @@ jobs:
       run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
       
     - name: Terragrunt plan
-      run: cd dev/services/codely-sqs && terragrunt plan --terragrunt-working-dir $CODE_DIR
+      run: terragrunt plan --terragrunt-working-dir $CODE_DIR
