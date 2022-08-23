@@ -1,0 +1,59 @@
+name: 'Terraform'
+
+on:
+  push:
+    branches:
+    - "main"
+  pull_request:
+
+permissions:
+  contents: read
+env:
+  TG_VERSION: v0.38.6
+  TF_VERSION: 1.2.5
+  TFSEC_VERSION: v1.5.0
+  CODE_DIR: dev/services/codely-sqs
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+    environment: production
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+    # Checkout the repository to the GitHub Actions runner
+    - name: Checkout
+      uses: actions/checkout@v3
+      
+    - name: Verify Terraform version
+      run: terraform --version
+
+    - name: Install Terragrunt
+      run: |
+       curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TG_VERSION/terragrunt_linux_amd64
+       chmod +x terragrunt
+       sudo mv terragrunt /bin
+    - name: Verify Terragrunt version
+      run: terragrunt --version
+      
+    - name: Install awscli
+      run: |
+       yum update -y
+       yum install -y curl jq awscli
+       
+    - name: Install checkov
+      run: pip3 install checkov
+      
+    - name: Install tfsec
+      run: |
+       yum install -y golang
+       wget -q -O tfsec https://github.com/aquasecurity/tfsec/releases/download/$TFSEC_VERSION/tfsec-linux-amd64
+       chmod +x ./tfsec
+       mv ./tfsec /usr/local/bin/tfsec
