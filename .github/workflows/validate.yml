@@ -57,6 +57,6 @@ jobs:
        
     - name: Run script tf_ssp_validations
       run: |
-         chmod +x ./.github/workflows/scripts/tf_ssp_validations.sh
-         ./.github/workflows/scripts/tf_ssp_validations.sh
+         chmod +x ./.github/workflows/scripts/tf_ssp_validation.sh
+         ./.github/workflows/scripts/tf_ssp_validation.sh
       shell: bash
