@@ -54,3 +54,9 @@ jobs:
        wget -q -O tfsec https://github.com/aquasecurity/tfsec/releases/download/$TFSEC_VERSION/tfsec-linux-amd64
        chmod +x ./tfsec
        mv ./tfsec /usr/local/bin/tfsec
+       
+    - name: Run script tf_ssp_validations
+      run: |
+         chmod +x ./.github/workflows/scripts/tf_ssp_validations.sh
+         ./.github/workflows/scripts/tf_ssp_validations.sh
+      shell: bash
