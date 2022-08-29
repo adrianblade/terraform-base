@@ -51,7 +51,6 @@ jobs:
       
     - name: Install tfsec
       run: |
-       yum install -y golang
        wget -q -O tfsec https://github.com/aquasecurity/tfsec/releases/download/$TFSEC_VERSION/tfsec-linux-amd64
        chmod +x ./tfsec
        mv ./tfsec /usr/local/bin/tfsec
