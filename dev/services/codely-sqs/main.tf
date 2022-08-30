@@ -12,6 +12,8 @@ data "aws_ami" "ubuntu" {
   }
 
   owners = ["099720109477"] # Canonical
+
+  provider = aws.mango-test-ireland
 }
 
 resource "aws_instance" "web" {
