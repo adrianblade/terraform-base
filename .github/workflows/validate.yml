@@ -16,7 +16,7 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  SKIPVALIDATIONFAILURE: "Y"
+  SKIPVALIDATIONFAILURE: "N"
   ENABLE_TFVALIDATE: "Y"
   ENABLE_TFFORMAT: "Y"
   ENABLE_TFCHECKOV: "Y"
@@ -53,7 +53,13 @@ jobs:
       run: aws --version
        
     - name: Install checkov
-      run: pip3 install checkov
+      run: |
+       sudo apt update
+       sudo apt install software-properties-common
+       sudo add-apt-repository ppa:deadsnakes/ppa
+       sudo apt install python3.7
+       sudo apt install python3-pip
+       sudo python3.7 -m pip install -U checkov
       
     - name: Install tfsec
       run: |
