@@ -34,6 +34,7 @@ then
     echo "## VALIDATION : Running tfsec ..."
     #tfsec .
     tfsec ./ --format junit --out tfsec-junit.xml
+    cat tfsec-junit.xml
 fi
 tfTfsecOutput=$?
 

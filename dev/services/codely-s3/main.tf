@@ -11,5 +11,5 @@ resource "aws_s3_bucket" "main" {
   }
 
   provider = aws.mango-test-ireland
-  
+
 }
