@@ -3,7 +3,7 @@ name: 'Plan'
 on:
   push:
     branches:
-    - "main"
+    - "main2"
   pull_request:
 
 permissions:
