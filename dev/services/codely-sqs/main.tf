@@ -24,5 +24,7 @@ resource "aws_instance" "web" {
     accountable = "development"
     domain      = "codely"
   }
+
+  provider = aws.mango-test-ireland
 }
 
