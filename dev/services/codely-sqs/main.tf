@@ -1,11 +1,22 @@
-resource "aws_sqs_queue" "terraform_queue" {
-  name                      = "${var.stage}-codely-sqs"
-  delay_seconds             = 90
-  max_message_size          = 2048
-  message_retention_seconds = 86400
-  receive_wait_time_seconds = 10
+data "aws_ami" "ubuntu" {
+  most_recent = true
 
-  policy = aws_sqs_queue_policy.queue_policy.policy
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
+  }
+
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+
+  owners = ["099720109477"] # Canonical
+}
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.micro"
 
   tags = {
     stage       = var.stage
@@ -13,26 +24,5 @@ resource "aws_sqs_queue" "terraform_queue" {
     accountable = "development"
     domain      = "codely"
   }
-
-  provider = aws.mango-test-ireland
 }
 
-resource "aws_sqs_queue_policy" "queue_policy" {
-  queue_url = aws_sqs_queue.q.id
-
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Id": "sqspolicy",
-  "Statement": [
-    {
-      "Sid": "First",
-      "Effect": "Allow",
-      "Principal": "*",
-      "Action": "*",
-      "Resource": "*",
-    }
-  ]
-}
-POLICY
-}
