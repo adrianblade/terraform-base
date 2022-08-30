@@ -19,7 +19,6 @@ env:
   SKIPVALIDATIONFAILURE: "N"
   ENABLE_TFVALIDATE: "Y"
   ENABLE_TFFORMAT: "Y"
-  ENABLE_TFCHECKOV: "Y"
   ENABLE_TFSEC: "Y"
 
 jobs:
@@ -51,16 +50,7 @@ jobs:
       
     - name: Verify awscli version
       run: aws --version
-       
-    - name: Install checkov
-      run: |
-       sudo apt update
-       sudo apt install software-properties-common
-       sudo add-apt-repository ppa:deadsnakes/ppa
-       sudo apt install python3.7
-       sudo apt install python3-pip
-       sudo python3.7 -m pip install -U checkov
-      
+             
     - name: Install tfsec
       run: |
        wget -q -O tfsec https://github.com/aquasecurity/tfsec/releases/download/$TFSEC_VERSION/tfsec-linux-amd64
@@ -70,5 +60,5 @@ jobs:
     - name: Run script tf_ssp_validations
       run: |
          chmod +x ./.github/workflows/scripts/tf_ssp_validation.sh
-         ./.github/workflows/scripts/tf_ssp_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFVALIDATE $ENABLE_TFFORMAT $ENABLE_TFCHECKOV $ENABLE_TFSEC
+         ./.github/workflows/scripts/tf_ssp_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFVALIDATE $ENABLE_TFFORMAT $ENABLE_TFSEC
       shell: bash

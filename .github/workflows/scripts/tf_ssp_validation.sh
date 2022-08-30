@@ -4,8 +4,7 @@
 SKIPVALIDATIONFAILURE=$1
 tfValidate=$2
 tfFormat=$3
-tfCheckov=$4
-tfTfsec=$5
+tfTfsec=$4
 # -----------------------------
 
 echo "### VALIDATION Overview ###"
@@ -13,7 +12,6 @@ echo "-------------------------"
 echo "Skip Validation Errors on Failure : ${SKIPVALIDATIONFAILURE}"
 echo "Terraform Validate : ${tfValidate}"
 echo "Terraform Format   : ${tfFormat}"
-echo "Terraform checkov  : ${tfCheckov}"
 echo "Terraform tfsec    : ${tfTfsec}"
 echo "------------------------"
 terragrunt init
@@ -31,14 +29,6 @@ then
 fi
 tfFormatOutput=$?
 
-if [[ ${tfCheckov} == "Y" ]]
-then
-    echo "## VALIDATION : Running checkov ..."
-    #checkov -s -d .
-    checkov -o junitxml --download-external-modules true --framework terraform -d ./ >checkov.xml
-fi
-tfCheckovOutput=$?
-
 if [[ ${tfTfsec} == "Y" ]]
 then
     echo "## VALIDATION : Running tfsec ..."
@@ -51,7 +41,6 @@ echo "## VALIDATION Summary ##"
 echo "------------------------"
 echo "Terraform Validate : ${tfValidateOutput}"
 echo "Terraform Format   : ${tfFormatOutput}"
-echo "Terraform checkov  : ${tfCheckovOutput}"
 echo "Terraform tfsec    : ${tfTfsecOutput}"
 echo "------------------------"
 
@@ -59,7 +48,7 @@ if [[ ${SKIPVALIDATIONFAILURE} == "Y" ]]
 then
   #if SKIPVALIDATIONFAILURE is set as Y, then validation failures are skipped during execution
   echo "## VALIDATION : Skipping validation failure checks..."
-elif [[ $tfValidateOutput == 0 && $tfFormatOutput == 0 && $tfCheckovOutput == 0  && $tfTfsecOutput == 0 ]]
+elif [[ $tfValidateOutput == 0 && $tfFormatOutput == 0 && $tfTfsecOutput == 0 ]]
 then
   echo "## VALIDATION : Checks Passed!!!"
 else
