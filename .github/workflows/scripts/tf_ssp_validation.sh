@@ -5,6 +5,7 @@ SKIPVALIDATIONFAILURE=$1
 tfValidate=$2
 tfFormat=$3
 tfTfsec=$4
+CODE_DIR=$5
 # -----------------------------
 
 echo "### VALIDATION Overview ###"
@@ -32,8 +33,7 @@ tfFormatOutput=$?
 if [[ ${tfTfsec} == "Y" ]]
 then
     echo "## VALIDATION : Running tfsec ..."
-    #tfsec .
-    tfsec dev/services/codely-s3 --format junit --out tfsec-junit.xml
+    tfsec ${CODE_DIR} --format junit --out tfsec-junit.xml
 fi
 tfTfsecOutput=$?
 
