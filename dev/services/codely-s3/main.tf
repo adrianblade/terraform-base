@@ -22,7 +22,7 @@ resource "aws_s3_bucket" "main" {
 
 }
 
-resource "aws_s3_bucket" "main" {
+resource "aws_s3_bucket" "main2" {
 
   bucket = "my-codely-test-bucket2"
   acl    = "public-read"
