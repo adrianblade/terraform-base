@@ -66,8 +66,8 @@ jobs:
     - name: Generate Infracost cost estimate baseline
       run: |
         infracost breakdown --path=${CODE_DIR} \
-                            --format=json \
-                            --out-file=/tmp/infracost-base.json
+                            --format=html \
+                            --out-file=/tmp/infracost-base.html
 
     # Checkout the current PR branch so we can create a diff.
     - name: Checkout PR branch
@@ -77,9 +77,12 @@ jobs:
     - name: Generate Infracost diff
       run: |
         infracost diff --path=${CODE_DIR} \
-                        --format=json \
-                        --compare-to=/tmp/infracost-base.json \
-                        --out-file=/tmp/infracost.json
+                        --format=html \
+                        --compare-to=/tmp/infracost-base.html \
+                        --out-file=/tmp/infracost.html
     
-    - name: Print infracost
-      run: cat /tmp/infracost.json
+  - name: HTML Preview
+    id: html_preview
+    uses: pavi2410/html-preview-action@v2
+    with:
+      html_file: '/tmp/infracost.html'
