@@ -81,8 +81,8 @@ jobs:
                         --compare-to=/tmp/infracost-base.html \
                         --out-file=/tmp/infracost.html
     
-  - name: HTML Preview
-    id: html_preview
-    uses: pavi2410/html-preview-action@v2
-    with:
-      html_file: '/tmp/infracost.html'
+    - name: HTML Preview
+      id: html_preview
+      uses: pavi2410/html-preview-action@v2
+      with:
+        html_file: '/tmp/infracost.html'
