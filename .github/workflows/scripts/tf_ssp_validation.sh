@@ -33,6 +33,7 @@ if [[ ${tfTfsec} == "Y" ]]
 then
     echo "## VALIDATION : Running tfsec ..."
     #tfsec .
+    ls
     tfsec ./ --format junit --out tfsec-junit.xml
     cat tfsec-junit.xml
 fi
