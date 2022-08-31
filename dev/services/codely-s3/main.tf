@@ -22,39 +22,30 @@ resource "aws_s3_bucket" "main" {
 
 }
 
-resource "aws_s3_bucket" "main2" {
 
-  bucket = "my-codely-test-bucket2"
-  acl    = "public-read"
+data "aws_ami" "ubuntu" {
+  most_recent = true
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        sse_algorithm = "AES256"
-      }
-    }
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-focal-20.04-amd64-server-*"]
   }
 
-  tags = {
-    stage       = var.stage
-    terraform   = "false"
-    accountable = "development"
-    domain      = "codely"
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
   }
 
-  provider = aws.mango-test-ireland
-
+  owners = ["099720109477"] # Canonical
+    provider = aws.mango-test-ireland
 }
 
-resource "aws_sqs_queue" "terraform_queue" {
-  name                      = "terraform-codely-example-queue"
-  delay_seconds             = 90
-  max_message_size          = 2048
-  message_retention_seconds = 86400
-  receive_wait_time_seconds = 10
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.large"
 
   tags = {
-    Environment = "production"
+    Name = "HelloWorld"
   }
-  provider = aws.mango-test-ireland
+    provider = aws.mango-test-ireland
 }
