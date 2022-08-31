@@ -34,7 +34,6 @@ then
     echo "## VALIDATION : Running tfsec ..."
     #tfsec .
     tfsec dev/services/codely-s3 --format junit --out tfsec-junit.xml
-    cat tfsec-junit.xml
 fi
 tfTfsecOutput=$?
 
