@@ -23,7 +23,7 @@ env:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'Terraform Validate'
     runs-on: ubuntu-latest
     environment: production
 

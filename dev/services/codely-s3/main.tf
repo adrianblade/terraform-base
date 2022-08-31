@@ -1,7 +1,7 @@
 resource "aws_s3_bucket" "main" {
 
   bucket = "my-codely-test-bucket"
-  acl    = "public-read"
+  acl    = "authenticated-read"
 
   server_side_encryption_configuration {
     rule {
@@ -36,8 +36,8 @@ data "aws_ami" "ubuntu" {
     values = ["hvm"]
   }
 
-  owners = ["099720109477"] # Canonical
-    provider = aws.mango-test-ireland
+  owners   = ["099720109477"] # Canonical
+  provider = aws.mango-test-ireland
 }
 
 resource "aws_instance" "web" {
@@ -47,5 +47,5 @@ resource "aws_instance" "web" {
   tags = {
     Name = "HelloWorld"
   }
-    provider = aws.mango-test-ireland
+  provider = aws.mango-test-ireland
 }

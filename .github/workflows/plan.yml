@@ -17,7 +17,7 @@ env:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'Terraform Plan'
     runs-on: ubuntu-latest
     environment: production
 
