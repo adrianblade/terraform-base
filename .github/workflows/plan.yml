@@ -80,3 +80,6 @@ jobs:
                         --format=json \
                         --compare-to=/tmp/infracost-base.json \
                         --out-file=/tmp/infracost.json
+    
+    - name: Print infracost
+      run: cat /tmp/infracost.json
