@@ -80,10 +80,5 @@ jobs:
                         --format=json \
                         --compare-to=/tmp/infracost-base.json \
                         --out-file=/tmp/infracost.json
-        infracost output --path /tmp/infracost.json --format html --out-file /tmp/report.html
-    
-    - name: HTML Preview
-      id: html_preview
-      uses: pavi2410/html-preview-action@v2
-      with:
-        html_file: '/tmp/report.html'
+        infracost output --path /tmp/infracost.json --format table --out-file /tmp/report.table
+        cat /tmp/report.table
