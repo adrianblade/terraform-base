@@ -78,6 +78,7 @@ jobs:
     - name: Terragrunt fmt
       id: fmt
       run: terragrunt fmt --terragrunt-working-dir $CODE_DIR -recursive -diff -check
+      continue-on-error: true
 
     #Reports & comments
 
