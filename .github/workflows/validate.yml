@@ -66,37 +66,21 @@ jobs:
     - name: Verify awscli version
       run: aws --version
 
-    - name: Run script tf_ssp_validations
+    - name: Run script tfsec_validations
       run: |
-         chmod +x ./.github/workflows/scripts/tf_ssp_validation.sh
-         ./.github/workflows/scripts/tf_ssp_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFSEC $CODE_DIR
+         chmod +x ./.github/workflows/scripts/tfsec_validation.sh
+         ./.github/workflows/scripts/tfsec_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFSEC $CODE_DIR
       shell: bash
-
-    - name: Terragrunt Validate
-      id: validate
-      run: terragrunt validate --terragrunt-working-dir $CODE_DIR
-      continue-on-error: true
-
-    - name: Post Validate
-      if: always() && github.ref != 'refs/heads/master' && (steps.validate.outcome == 'success' || steps.validate.outcome == 'failure')
-      uses: robburger/terraform-pr-commenter@v1
-      with:
-        commenter_type: validate
-        commenter_input: ${{ format('{0}{1}', steps.validate.outputs.stdout, steps.validate.outputs.stderr) }}
-        commenter_exitcode: ${{ steps.validate.outputs.exitcode }}
 
     - name: Terragrunt Format
       id: fmt
-      run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
+      run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff >> /tmp/fmt.txt
       continue-on-error: true
 
     - name: Post Format
-      if: always() && github.ref != 'refs/heads/master' && (steps.fmt.outcome == 'success' || steps.fmt.outcome == 'failure')
-      uses: robburger/terraform-pr-commenter@v1
+      uses: NejcZdovc/comment-pr@v1
       with:
-        commenter_type: fmt
-        commenter_input: ${{ format('{0}{1}', steps.fmt.outputs.stdout, steps.fmt.outputs.stderr) }}
-        commenter_exitcode: ${{ steps.fmt.outputs.exitcode }}
+        file: "/tmp/fmt.txt"
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
