@@ -81,13 +81,13 @@ jobs:
         path: tmp
     - uses: actions/download-artifact@v1
       with:
-        name: fmt
+        name: results
     - name: comment PR
       uses: machine-learning-apps/pr-comment@master
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        path: fmt/fmt.txt
+        path: results/results.txt
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
