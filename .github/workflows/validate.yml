@@ -75,19 +75,21 @@ jobs:
          ./.github/workflows/scripts/tf_ssp_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFVALIDATE $ENABLE_TFSEC $CODE_DIR
       shell: bash
 
-    - uses: actions/upload-artifact@v1
-      with:
-        name: fmt
-        path: tmp
+      - name: cd
+        run: cd $CODE_DIR
 
-    - uses: actions/download-artifact@v1
-      with:
-        name: results
+      - name: Terragrunt Format
+        id: fmt
+        run: terragrunt fmt -check -recursive
+        continue-on-error: true
 
-    - name: comment PR
-      uses: machine-learning-apps/pr-comment@master
-      with:
-        path: 'tmp/fmt.txt'
+      - name: Post Format
+        if: always() && github.ref != 'refs/heads/master' && (steps.fmt.outcome == 'success' || steps.fmt.outcome == 'failure')
+        uses: robburger/terraform-pr-commenter@v1
+        with:
+          commenter_type: fmt
+          commenter_input: ${{ format('{0}{1}', steps.fmt.outputs.stdout, steps.fmt.outputs.stderr) }}
+          commenter_exitcode: ${{ steps.fmt.outputs.exitcode }}
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
@@ -95,20 +97,5 @@ jobs:
       with:
         fail-on-error: false
         name: TfSec Tests            # Name of the check run which will be created
-        path: tfsec-junit.xml        # Path to test results
+        path: /tmp/tfsec-junit.xml        # Path to test results
         reporter: java-junit         # Format of test results
-
-
-      - uses: actions/upload-artifact@v1
-        with:
-          name: results
-          path: output
-      - uses: actions/download-artifact@v1
-        with:
-          name: results
-      - name: comment PR
-        uses: machine-learning-apps/pr-comment@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          path: results/results.txt

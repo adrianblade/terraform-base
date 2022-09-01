@@ -33,7 +33,7 @@ tfFormatOutput=$?
 if [[ ${tfTfsec} == "Y" ]]
 then
     echo "## VALIDATION : Running tfsec ..."
-    tfsec ${CODE_DIR} --format junit --out tfsec-junit.xml
+    tfsec ${CODE_DIR} --format junit --out /tmp/tfsec-junit.xml
 fi
 tfTfsecOutput=$?
 
