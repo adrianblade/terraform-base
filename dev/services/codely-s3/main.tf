@@ -1,7 +1,7 @@
 resource "aws_s3_bucket" "main" {
 
-  bucket = "my-codely-test-bucket"
-  acl    = "authenticated-read"
+          bucket = "my-codely-test-bucket"
+      acl    = "authenticated-read"
 
   tags = {
     stage       = var.stage
