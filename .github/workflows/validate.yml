@@ -73,9 +73,22 @@ jobs:
          ./.github/workflows/scripts/tf_ssp_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFVALIDATE $ENABLE_TFSEC $CODE_DIR
       shell: bash
 
+    - name: Terragrunt Validate
+      id: fmt
+      run: terragrunt validate --terragrunt-working-dir $CODE_DIR -diff
+      continue-on-error: true
+
+    - name: Post Validate
+      if: always() && github.ref != 'refs/heads/master' && (steps.validate.outcome == 'success' || steps.validate.outcome == 'failure')
+      uses: robburger/terraform-pr-commenter@v1
+      with:
+        commenter_type: validate
+        commenter_input: ${{ format('{0}{1}', steps.validate.outputs.stdout, steps.validate.outputs.stderr) }}
+        commenter_exitcode: ${{ steps.validate.outputs.exitcode }}
+
     - name: Terragrunt Format
       id: fmt
-      run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR
+      run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
       continue-on-error: true
 
     - name: Post Format
