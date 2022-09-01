@@ -1,9 +1,13 @@
 name: 'Validate'
 
+# on:
+#   push:
+#     branches-ignore:
+#     - 'main'
+
 on:
-  push:
-    branches-ignore:
-    - 'main'
+  pull_request:
+    types: [opened, reopened, synchronize]
 
 permissions: write-all
 
