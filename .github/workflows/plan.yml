@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: read
+  pull-requests: write
 env:
   TG_VERSION: v0.38.6
   TF_VERSION: 1.2.5
@@ -98,7 +99,7 @@ jobs:
     - name: Post Infracost comment
       run: |
         infracost comment github --path=/tmp/infracost.json \
-                                  --repo=$GITHUB_REPOSITORY \
+                                  --repo=$INFRACOST_VCS_REPOSITORY_URL \
                                   --github-token=${{github.token}} \
-                                  --pull-request=${{github.event.pull_request.number}} \
+                                  --pull-request=${{github.event.number}} \
                                   --behavior=update
