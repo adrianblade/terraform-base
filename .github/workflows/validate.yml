@@ -5,8 +5,8 @@ on:
     branches-ignore:
     - 'main'
 
-permissions:
-  contents: read
+permissions: write-all
+
 env:
   TG_VERSION: v0.38.6
   TF_VERSION: 1.2.5
