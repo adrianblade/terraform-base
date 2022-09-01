@@ -52,6 +52,11 @@ jobs:
 
     - name: Verify Terragrunt version
       run: terragrunt --version
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_wrapper: true
       
     - name: Terragrunt init
       run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
