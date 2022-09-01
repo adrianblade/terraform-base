@@ -67,7 +67,7 @@ jobs:
     - name: Verify awscli version
       run: aws --version
 
-    #Run
+    # Run
                     
     - name: Run script tf_ssp_validations
       run: |
