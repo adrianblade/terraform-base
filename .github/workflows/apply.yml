@@ -3,7 +3,7 @@ name: 'Apply'
 on:
   push:
     branches:
-    - "main2"
+    - "main"
 
 permissions:
   contents: read
