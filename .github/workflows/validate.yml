@@ -74,7 +74,7 @@ jobs:
 
     - name: Terragrunt Validate
       id: validate
-      run: terragrunt validate --terragrunt-working-dir $CODE_DIR -diff
+      run: terragrunt validate --terragrunt-working-dir $CODE_DIR
       continue-on-error: true
 
     - name: Post Validate
