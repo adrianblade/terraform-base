@@ -85,7 +85,7 @@ jobs:
     - name: comment PR
       uses: machine-learning-apps/pr-comment@master
       with:
-        path: results/results.txt
+        path: tmp/fmt.txt
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
