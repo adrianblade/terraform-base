@@ -83,7 +83,6 @@ jobs:
     #Reports & comments
 
     - name: Post Format
-      if: always() && github.ref != 'refs/heads/master' && (steps.fmt.outcome == 'success' || steps.fmt.outcome == 'failure')
       uses: robburger/terraform-pr-commenter@v1
       with:
         commenter_type: fmt
