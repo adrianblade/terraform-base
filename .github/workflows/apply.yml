@@ -52,4 +52,4 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      run: cd dev/services/codely-sqs && terragrunt apply -auto-approve -input=false
+      run: terragrunt apply -auto-approve -input=false --terragrunt-working-dir $CODE_DIR
