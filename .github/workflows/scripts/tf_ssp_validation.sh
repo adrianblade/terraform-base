@@ -3,16 +3,14 @@
 # Accept Command Line Arguments
 SKIPVALIDATIONFAILURE=$1
 tfValidate=$2
-tfFormat=$3
-tfTfsec=$4
-CODE_DIR=$5
+tfTfsec=$3
+CODE_DIR=$4
 # -----------------------------
 
 echo "### VALIDATION Overview ###"
 echo "-------------------------"
 echo "Skip Validation Errors on Failure : ${SKIPVALIDATIONFAILURE}"
 echo "Terraform Validate : ${tfValidate}"
-echo "Terraform Format   : ${tfFormat}"
 echo "Terraform tfsec    : ${tfTfsec}"
 echo "------------------------"
 terragrunt init
@@ -22,13 +20,6 @@ then
     terragrunt validate
 fi
 tfValidateOutput=$?
-
-if [[ ${tfFormat} == "Y" ]]
-then
-    echo "## VALIDATION : Formatting Terraform code ..."
-    terraform fmt -recursive -check
-fi
-tfFormatOutput=$?
 
 if [[ ${tfTfsec} == "Y" ]]
 then
