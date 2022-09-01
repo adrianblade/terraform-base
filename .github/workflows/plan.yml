@@ -55,7 +55,15 @@ jobs:
       run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
       
     - name: Terragrunt plan
-      run: terragrunt plan --terragrunt-working-dir $CODE_DIR
+      id: plan
+      run: terragrunt plan --terragrunt-working-dir $CODE_DIR -out workspace.plan
+
+    - name: Post Plan
+      uses: robburger/terraform-pr-commenter@v1
+      with:
+        commenter_type: plan
+        commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
+        commenter_exitcode: ${{ steps.plan.outputs.exitcode }
 
     - name: Setup Infracost
       uses: infracost/actions/setup@v2
