@@ -69,3 +69,4 @@ jobs:
         name: TfSec Tests            # Name of the check run which will be created
         path: tfsec-junit.xml        # Path to test results
         reporter: java-junit        # Format of test results
+        fail_on_failure: false
