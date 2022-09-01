@@ -40,6 +40,11 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: $TF_VERSION
       
     - name: Verify Terraform version
       run: terraform --version
@@ -52,11 +57,6 @@ jobs:
 
     - name: Verify Terragrunt version
       run: terragrunt --version
-
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_wrapper: true
       
     - name: Terragrunt init
       run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
