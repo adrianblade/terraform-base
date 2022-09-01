@@ -89,10 +89,6 @@ jobs:
     - name: Generate Infracost output as table
       run: |
         infracost output --path /tmp/infracost.json --format table --out-file /tmp/report.table
-      
-    - name: Print Infracost tables
-      run: |
-        cat /tmp/report.table
 
     - name: Post Infracost comment
       run: |
