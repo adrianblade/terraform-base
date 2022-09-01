@@ -77,11 +77,12 @@ jobs:
 
     - name: Terragrunt fmt
       id: fmt
-      run: terragrunt fmt --terragrunt-working-dir $CODE_DIR
+      run: terragrunt fmt --terragrunt-working-dir $CODE_DIR -recursive -diff -check
 
     #Reports & comments
 
-    - name: Post fmt
+    - name: Post Format
+      if: always() && github.ref != 'refs/heads/master' && (steps.fmt.outcome == 'success' || steps.fmt.outcome == 'failure')
       uses: robburger/terraform-pr-commenter@v1
       with:
         commenter_type: fmt
