@@ -83,13 +83,6 @@ jobs:
         commenter_input: ${{ format('{0}{1}', steps.fmt.outputs.stdout, steps.fmt.outputs.stderr) }}
         commenter_exitcode: ${{ steps.fmt.outputs.exitcode }}
 
-    - name: FMT report
-      uses: machine-learning-apps/pr-comment@master
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        path: results/results.txt
-
     - name: TfSec Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    
