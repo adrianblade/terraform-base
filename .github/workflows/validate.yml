@@ -79,13 +79,15 @@ jobs:
       with:
         name: fmt
         path: tmp
+
     - uses: actions/download-artifact@v1
       with:
         name: results
+
     - name: comment PR
       uses: machine-learning-apps/pr-comment@master
       with:
-        path: tmp/fmt.txt
+        path: 'tmp/fmt.txt'
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
