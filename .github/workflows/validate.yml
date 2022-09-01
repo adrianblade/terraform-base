@@ -73,7 +73,7 @@ jobs:
       shell: bash
 
     - name: Terragrunt Validate
-      id: fmt
+      id: validate
       run: terragrunt validate --terragrunt-working-dir $CODE_DIR -diff
       continue-on-error: true
 
