@@ -89,7 +89,11 @@ jobs:
     - name: Generate Infracost output as table
       run: |
         infracost output --path /tmp/infracost.json --format table --out-file /tmp/report.table
-      
-    - name: Print Infracost tables
+
+    - name: Post Infracost comment
       run: |
-        cat /tmp/report.table
+        infracost comment github --path=/tmp/infracost.json \
+                                  --repo=$GITHUB_REPOSITORY \
+                                  --github-token=${{github.token}} \
+                                  --pull-request=${{github.event.pull_request.number}} \
+                                  --behavior=update
