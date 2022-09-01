@@ -75,19 +75,19 @@ jobs:
          ./.github/workflows/scripts/tf_ssp_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFVALIDATE $ENABLE_TFSEC $CODE_DIR
       shell: bash
 
-    - name: Terragrunt fmt
-      id: fmt
-      run: terragrunt fmt --terragrunt-working-dir $CODE_DIR -diff -check
-      continue-on-error: true
-
-    #Reports & comments
-
-    - name: Post Format
-      uses: robburger/terraform-pr-commenter@v1
+    - uses: actions/upload-artifact@v1
       with:
-        commenter_type: fmt
-        commenter_input: ${{ format('{0}{1}', steps.fmt.outputs.stdout, steps.fmt.outputs.stderr) }}
-        commenter_exitcode: ${{ steps.fmt.outputs.exitcode }}
+        name: fmt
+        path: tmp
+    - uses: actions/download-artifact@v1
+      with:
+        name: fmt
+    - name: comment PR
+      uses: machine-learning-apps/pr-comment@master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        path: fmt/fmt.txt
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
@@ -99,3 +99,16 @@ jobs:
         reporter: java-junit         # Format of test results
 
 
+      - uses: actions/upload-artifact@v1
+        with:
+          name: results
+          path: output
+      - uses: actions/download-artifact@v1
+        with:
+          name: results
+      - name: comment PR
+        uses: machine-learning-apps/pr-comment@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          path: results/results.txt
