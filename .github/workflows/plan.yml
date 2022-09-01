@@ -1,12 +1,17 @@
 name: 'Plan'
 
+# on:
+#   workflow_run:
+#     workflows: ["Validate"]
+#     branches:
+#      - "*"
+#     types: 
+#       - completed
+
 on:
-  workflow_run:
-    workflows: ["Validate"]
-    branches:
-     - "*"
-    types: 
-      - completed
+  push:
+    branches-ignore:
+    - 'main'
 
 permissions:
   contents: read
@@ -19,7 +24,7 @@ env:
 
 jobs:
   terraform:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
     environment: production
