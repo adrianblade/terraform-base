@@ -12,7 +12,7 @@ on:
   push:
     branches-ignore:
     - 'main'
-  pull_requests:
+  pull_request:
 
 permissions:
   contents: read
