@@ -3,7 +3,8 @@ name: 'Plan'
 on:
   workflow_run:
     workflows: ["Validate"]
-    branches: [*]
+    branches:
+     - "*"
     types: 
       - completed
 
