@@ -63,7 +63,6 @@ jobs:
       
     - name: Terragrunt plan
       id: plan
-      terraform_wrapper: true
       run: terragrunt plan --terragrunt-working-dir $CODE_DIR -out workspace.plan
 
     - name: Post Plan
