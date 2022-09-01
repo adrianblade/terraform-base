@@ -1,15 +1,20 @@
 name: 'Plan'
 
+# on:
+#   workflow_run:
+#     workflows: ["Validate"]
+#     branches:
+#      - "*"
+#     types: 
+#       - completed
+
 on:
-  workflow_run:
-    workflows: ["Validate"]
-    branches:
-     - "*"
-    types: 
-      - completed
+  pull_request:
+    types: [opened, reopened, synchronize]
 
 permissions:
   contents: read
+  pull-requests: write
 env:
   TG_VERSION: v0.38.6
   TF_VERSION: 1.2.5
@@ -19,7 +24,7 @@ env:
 
 jobs:
   terraform:
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
     environment: production
@@ -92,8 +97,8 @@ jobs:
 
     - name: Post Infracost comment
       run: |
-        infracost comment github --path=/tmp/infracost.json \
-                                  --repo=$GITHUB_REPOSITORY \
-                                  --github-token=${{github.token}} \
-                                  --pull-request=${{github.event.pull_request.number}} \
-                                  --behavior=update
+        infracost comment github --path /tmp/infracost.json \
+                                  --repo $GITHUB_REPOSITORY  \
+                                  --github-token ${{ github.token }} \
+                                  --pull-request ${{ github.event.pull_request.number }} \
+                                  --behavior update
