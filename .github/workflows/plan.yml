@@ -98,8 +98,8 @@ jobs:
 
     - name: Post Infracost comment
       run: |
-        infracost comment github --path=/tmp/infracost.json \
-                                  --repo=$INFRACOST_VCS_REPOSITORY_URL \
-                                  --github-token=${{github.token}} \
-                                  --pull-request=${{github.event.number}} \
-                                  --behavior=update
+        infracost comment github --path /tmp/infracost.json \
+                                  --repo $GITHUB_REPOSITORY  \
+                                  --github-token ${{github.token}} \
+                                  --pull-request ${{github.event.pull_request.number}} \
+                                  --behavior update
