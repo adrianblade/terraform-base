@@ -1,10 +1,11 @@
 name: 'Plan'
 
 on:
-  push:
-    branches:
-    - "main2"
-  pull_request:
+  workflow_run:
+    workflows: ["Validate"]
+    branches: [*]
+    types: 
+      - completed
 
 permissions:
   contents: read
@@ -16,6 +17,7 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
+if: ${{ github.event.workflow_run.conclusion == 'success' }}
   terraform:
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
