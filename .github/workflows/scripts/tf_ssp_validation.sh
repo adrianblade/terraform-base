@@ -26,14 +26,14 @@ tfValidateOutput=$?
 if [[ ${tfFormat} == "Y" ]]
 then
     echo "## VALIDATION : Formatting Terraform code ..."
-    terraform fmt -recursive -check >> /tmp/fmt.txt
+    terraform fmt -recursive -check
 fi
 tfFormatOutput=$?
 
 if [[ ${tfTfsec} == "Y" ]]
 then
     echo "## VALIDATION : Running tfsec ..."
-    tfsec ${CODE_DIR} --format junit --out /tmp/tfsec-junit.xml
+    tfsec ${CODE_DIR} --format junit --out tfsec-junit.xml
 fi
 tfTfsecOutput=$?
 
