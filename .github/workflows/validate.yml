@@ -74,6 +74,19 @@ jobs:
       run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
       continue-on-error: false
 
+    - name: Terragrunt Validate
+      id: validate
+      run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
+      continue-on-error: false
+
+    - name: Post Validate
+      if: always() && github.ref != 'refs/heads/master' && (steps.validate.outcome == 'success' || steps.validate.outcome == 'failure')
+      uses: robburger/terraform-pr-commenter@v1
+      with:
+        commenter_type: validate
+        commenter_input: ${{ format('{0}{1}', steps.validate.outputs.stdout, steps.validate.outputs.stderr) }}
+        commenter_exitcode: ${{ steps.validate.outputs.exitcode }}
+
     - name: TfSec Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    
