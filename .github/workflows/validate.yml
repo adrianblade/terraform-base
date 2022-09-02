@@ -77,11 +77,6 @@ jobs:
       run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
       continue-on-error: true
 
-    - name: Post Format
-      uses: NejcZdovc/comment-pr@v1
-      with:
-        message: '${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}'
-
     - name: TfSec Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    
