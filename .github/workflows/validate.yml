@@ -80,7 +80,7 @@ jobs:
     - name: Post Format
       uses: NejcZdovc/comment-pr@v1
       with:
-        message: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
+        message: '${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}'
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
