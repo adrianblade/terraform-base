@@ -1,13 +1,5 @@
 name: 'Plan'
 
-# on:
-#   workflow_run:
-#     workflows: ["Validate"]
-#     branches:
-#      - "*"
-#     types: 
-#       - completed
-
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -26,7 +18,6 @@ env:
 
 jobs:
   terraform:
-    #if: ${{ github.event.workflow_run.conclusion == 'success' }}
     name: 'Terraform Plan'
     runs-on: ubuntu-latest
     environment: production
@@ -76,8 +67,6 @@ jobs:
       id: plan
       run: terragrunt plan --terragrunt-working-dir $CODE_DIR -out workspace.plan
 
-    #Post comment
-
     - name: Post Plan
       uses: robburger/terraform-pr-commenter@v1
       with:
@@ -85,8 +74,7 @@ jobs:
         commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
         commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
 
-
-    #InfraCost
+    # infracost
 
     # Checkout the base branch of the pull request (e.g. main/master).
     - name: Checkout base branch

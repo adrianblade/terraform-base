@@ -11,7 +11,6 @@ echo "-------------------------"
 echo "Skip Validation Errors on Failure : ${SKIPVALIDATIONFAILURE}"
 echo "Terraform tfsec    : ${tfTfsec}"
 echo "------------------------"
-terragrunt init
 
 if [[ ${tfTfsec} == "Y" ]]
 then

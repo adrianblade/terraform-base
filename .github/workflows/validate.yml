@@ -87,7 +87,7 @@ jobs:
         commenter_input: ${{ format('{0}{1}', steps.validate.outputs.stdout, steps.validate.outputs.stderr) }}
         commenter_exitcode: ${{ steps.validate.outputs.exitcode }}
 
-    - name: TfSec Report
+    - name: Post TfSec Report
       uses: dorny/test-reporter@v1
       if: success() || failure()    
       with:
