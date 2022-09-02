@@ -68,6 +68,10 @@ jobs:
       run: terraform --version
 
     #Run      
+    - uses: trstringer/manual-approval@v1
+      with:
+        secret: ${{ github.TOKEN }}
+        approvers: estif95
 
     - name: Terragrunt init
       run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
@@ -85,9 +89,7 @@ jobs:
         commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
         commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
 
-
-    #InfraCost
-
+  infracost:
     # Checkout the base branch of the pull request (e.g. main/master).
     - name: Checkout base branch
       uses: actions/checkout@v2
