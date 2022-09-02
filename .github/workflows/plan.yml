@@ -22,6 +22,8 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 jobs:
   terraform:
     #if: ${{ github.event.workflow_run.conclusion == 'success' }}
@@ -38,10 +40,21 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-      
-    - name: Verify Terraform version
-      run: terraform --version
 
+    #Setup
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: $TF_VERSION
+
+    - name: Setup Infracost
+      uses: infracost/actions/setup@v2
+      # See https://github.com/infracost/actions/tree/master/setup for other inputs
+      # If you can't use this action, see Docker images in https://infracost.io/cicd
+      with:
+        api-key: ${{ secrets.INFRACOST_API_KEY }}
+      
     - name: Install Terragrunt
       run: |
        curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TG_VERSION/terragrunt_linux_amd64
@@ -50,19 +63,30 @@ jobs:
 
     - name: Verify Terragrunt version
       run: terragrunt --version
-      
+
+    - name: Verify Terraform version
+      run: terraform --version
+
+    #Run      
+
     - name: Terragrunt init
       run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
       
     - name: Terragrunt plan
-      run: terragrunt plan --terragrunt-working-dir $CODE_DIR
+      id: plan
+      run: terragrunt plan --terragrunt-working-dir $CODE_DIR -out workspace.plan
 
-    - name: Setup Infracost
-      uses: infracost/actions/setup@v2
-      # See https://github.com/infracost/actions/tree/master/setup for other inputs
-      # If you can't use this action, see Docker images in https://infracost.io/cicd
+    #Post comment
+
+    - name: Post Plan
+      uses: robburger/terraform-pr-commenter@v1
       with:
-        api-key: ${{ secrets.INFRACOST_API_KEY }}
+        commenter_type: plan
+        commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
+        commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
+
+
+    #InfraCost
 
     # Checkout the base branch of the pull request (e.g. main/master).
     - name: Checkout base branch
@@ -90,11 +114,7 @@ jobs:
                         --out-file=/tmp/infracost.json
         infracost output --path /tmp/infracost.json --format table --out-file /tmp/report.table
         cat /tmp/report.table
-
-    - name: Generate Infracost output as table
-      run: |
-        infracost output --path /tmp/infracost.json --format table --out-file /tmp/report.table
-
+    #Post comment
     - name: Post Infracost comment
       run: |
         infracost comment github --path /tmp/infracost.json \

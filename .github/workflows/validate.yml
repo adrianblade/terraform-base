@@ -1,9 +1,8 @@
 name: 'Validate'
 
 on:
-  push:
-    branches-ignore:
-    - 'main'
+  pull_request:
+    types: [opened, reopened, synchronize]
 
 permissions: write-all
 
@@ -16,9 +15,9 @@ env:
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
   SKIPVALIDATIONFAILURE: "Y"
-  ENABLE_TFVALIDATE: "Y"
-  ENABLE_TFFORMAT: "Y"
   ENABLE_TFSEC: "Y"
+
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
   terraform:
@@ -26,38 +25,73 @@ jobs:
     runs-on: ubuntu-latest
     environment: production
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
     defaults:
       run:
         shell: bash
 
     steps:
-    # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
-      
-    - name: Verify Terraform version
-      run: terraform --version
+
+    # Setup
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: $TF_VERSION
 
     - name: Install Terragrunt
       run: |
        curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TG_VERSION/terragrunt_linux_amd64
        chmod +x terragrunt
        sudo mv terragrunt /bin
-    - name: Verify Terragrunt version
-      run: terragrunt --version
       
-    - name: Verify awscli version
-      run: aws --version
-             
     - name: Install tfsec
       run: |
        wget -q -O tfsec https://github.com/aquasecurity/tfsec/releases/download/$TFSEC_VERSION/tfsec-linux-amd64
        chmod +x ./tfsec
        mv ./tfsec /usr/local/bin/tfsec
-       
-    - name: Run script tf_ssp_validations
+
+    - name: Verify Terragrunt version
+      run: terragrunt --version
+      
+    - name: Verify Terraform version
+      run: terraform --version
+      
+    - name: Verify awscli version
+      run: aws --version
+
+    # RUN
+
+    - name: Run script tfsec_validations
       run: |
-         chmod +x ./.github/workflows/scripts/tf_ssp_validation.sh
-         ./.github/workflows/scripts/tf_ssp_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFVALIDATE $ENABLE_TFFORMAT $ENABLE_TFSEC $CODE_DIR
+         chmod +x ./.github/workflows/scripts/tfsec_validation.sh
+         ./.github/workflows/scripts/tfsec_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFSEC $CODE_DIR
       shell: bash
+
+    - name: Terragrunt Format
+      id: fmt
+      run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
+      continue-on-error: false
+
+    - name: Terragrunt Validate
+      id: validate
+      run: terragrunt validate --terragrunt-working-dir $CODE_DIR 
+      continue-on-error: true
+
+    - name: Post Validate
+      if: always() && github.ref != 'refs/heads/master' && (steps.validate.outcome == 'success' || steps.validate.outcome == 'failure')
+      uses: robburger/terraform-pr-commenter@v1
+      with:
+        commenter_type: validate
+        commenter_input: ${{ format('{0}{1}', steps.validate.outputs.stdout, steps.validate.outputs.stderr) }}
+        commenter_exitcode: ${{ steps.validate.outputs.exitcode }}
+
+    - name: TfSec Report
+      uses: dorny/test-reporter@v1
+      if: success() || failure()    
+      with:
+        fail-on-error: false
+        name: TfSec Tests            # Name of the check run which will be created
+        path: tfsec-junit.xml        # Path to test results
+        reporter: java-junit         # Format of test results
