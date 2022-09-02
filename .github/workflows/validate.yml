@@ -76,7 +76,7 @@ jobs:
     - name: Terragrunt Format
       id: fmt
       run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
-      continue-on-error: $DISABLE_TF_FMT
+      continue-on-error: '$DISABLE_TF_FMT'
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
