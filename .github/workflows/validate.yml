@@ -21,6 +21,7 @@ env:
 
   SKIPVALIDATIONFAILURE: "Y"
   ENABLE_TFSEC: "Y"
+  DISABLE_TF_FMT: true
 
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -75,7 +76,7 @@ jobs:
     - name: Terragrunt Format
       id: fmt
       run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
-      continue-on-error: true
+      continue-on-error: $DISABLE_TF_FMT
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
