@@ -89,7 +89,8 @@ jobs:
         commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
         commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
 
-  infracost:
+    # InfraCost
+  
     # Checkout the base branch of the pull request (e.g. main/master).
     - name: Checkout base branch
       uses: actions/checkout@v2
