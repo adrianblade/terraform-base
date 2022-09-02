@@ -1,10 +1,5 @@
 name: 'Validate'
 
-# on:
-#   push:
-#     branches-ignore:
-#     - 'main'
-
 on:
   pull_request:
     types: [opened, reopened, synchronize]
@@ -66,6 +61,8 @@ jobs:
     - name: Verify awscli version
       run: aws --version
 
+    # RUN
+
     - name: Run script tfsec_validations
       run: |
          chmod +x ./.github/workflows/scripts/tfsec_validation.sh
@@ -75,7 +72,7 @@ jobs:
     - name: Terragrunt Format
       id: fmt
       run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
-      continue-on-error: true
+      continue-on-error: false
 
     - name: TfSec Report
       uses: dorny/test-reporter@v1
