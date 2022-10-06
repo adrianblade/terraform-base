@@ -5,15 +5,15 @@ This repository contains a basic Terraform CICD. Designed to store all the IaC c
 
 # Workflows
 
-![workflows](./workflows.png)
+![workflows](./screenshots/workflows.PNG)
 
 # Screenshots
 
 ![tfsec](./tfsec.png)
 
-![infracost](./infracost.png)
+![infracost](./screenshots/infracost.PNG)
 
-![plan](./plan.png)
+![plan](./screenshots/plan.PNG)
 
 # Contributing
 
