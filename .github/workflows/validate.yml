@@ -14,9 +14,6 @@ env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  SKIPVALIDATIONFAILURE: "Y"
-  ENABLE_TFSEC: "Y"
-
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 jobs:
@@ -60,14 +57,6 @@ jobs:
       
     - name: Verify awscli version
       run: aws --version
-
-    # RUN
-
-    # - name: Run script tfsec_validations
-    #   run: |
-    #      chmod +x ./.github/workflows/scripts/tfsec_validation.sh
-    #      ./.github/workflows/scripts/tfsec_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFSEC $CODE_DIR
-    #   shell: bash
 
     - name: tfsec report
       run: |
