@@ -69,10 +69,11 @@ jobs:
     #      ./.github/workflows/scripts/tfsec_validation.sh $SKIPVALIDATIONFAILURE $ENABLE_TFSEC $CODE_DIR
     #   shell: bash
 
-    - name: Run script tfsec_validations
+    - name: tfsec report
       run: |
          tfsec $CODE_DIR --format junit --out tfsec-junit.xml
       shell: bash
+      continue-on-error: true
 
     - name: Terragrunt Format
       id: fmt
