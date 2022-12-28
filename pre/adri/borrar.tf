@@ -1,1 +1,1 @@
-hahaha
+resource "null_resource" "cluster" {}
