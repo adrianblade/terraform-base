@@ -29,6 +29,7 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      fetch-depth: '2'
 
     # Setup
 
@@ -39,7 +40,7 @@ jobs:
 
     - name: Print GitHub Actions env variables
       run: |
-        WORKING_DIR=$(git --no-pager diff --raw --name-only $GITHUB_REF..$GITHUB_REF~1 | sed -e "s/^/\\//" | egrep -E "\.tf\$|^\/test|^\/pre|^\/pro|^\/all" | grep ".*\/" -o | uniq)
+        WORKING_DIR=$(git --no-pager diff --raw --name-only refs/heads/main..refs/heads/main~1 | sed -e "s/^/\\//" | egrep -E "\.tf\$|^\/test|^\/pre|^\/pro|^\/all" | grep ".*\/" -o | uniq)
         echo $WORKING_DIR
 
     # - name: Install Terragrunt
