@@ -37,7 +37,6 @@ jobs:
       run: |
         git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
         git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
-
     # Setup
 
     # - name: Setup Terraform
@@ -47,6 +46,10 @@ jobs:
 
     - name: Print GitHub Actions env variables
       run: |
+        echo "Ensure we can view $GITHUB_HEAD_REF"
+        git checkout $GITHUB_HEAD_REF
+        echo "Ensure we can view $GITHUB_BASE_REF"
+        git checkout $GITHUB_BASE_REF
         WORKING_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only $GITHUB_BASE_REF $GITHUB_HEAD_REF)
         echo $WORKING_DIR
     # - name: Install Terragrunt
