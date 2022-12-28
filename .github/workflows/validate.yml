@@ -39,9 +39,9 @@ jobs:
 
     - name: Print GitHub Actions env variables
       run: |
-        echo "${{ GITHUB.HEAD.REF }}"
+        echo $GITHUB_HEAD_REF
         echo $GITHUB_REF
-        echo "${{ env.GITHUB_REF_NAME }}"
+        echo $GITHUB_REF_NAME
 
     # - name: Install Terragrunt
     #   run: |
