@@ -72,18 +72,18 @@ jobs:
 
     - name: tfsec report
       run: |
-         tfsec $CODE_DIR --format junit --out tfsec-junit.xml
+         tfsec $WORKING_DIR --format junit --out tfsec-junit.xml
       shell: bash
       continue-on-error: true
 
     - name: Terragrunt Format
       id: fmt
-      run: terragrunt fmt -check -recursive --terragrunt-working-dir $CODE_DIR -diff
+      run: terragrunt fmt -check -recursive --terragrunt-working-dir $WORKING_DIR -diff
       continue-on-error: false
 
     - name: Terragrunt Validate
       id: validate
-      run: terragrunt validate --terragrunt-working-dir $CODE_DIR 
+      run: terragrunt validate --terragrunt-working-dir $WORKING_DIR 
       continue-on-error: true
 
     - name: Post Validate
