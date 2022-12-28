@@ -78,7 +78,9 @@ jobs:
 
     - name: Terragrunt Format
       id: fmt
-      run: terragrunt fmt -check -recursive --terragrunt-working-dir $WORKING_DIR -diff
+      run: |
+        echo $WORKING_DIR
+        terragrunt fmt -check -recursive --terragrunt-working-dir $WORKING_DIR -diff
       continue-on-error: false
 
     - name: Terragrunt Validate
