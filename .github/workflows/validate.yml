@@ -27,17 +27,21 @@ jobs:
         shell: bash
 
     steps:
+
     - name: Checkout
       uses: actions/checkout@v3
       with:
         fetch-depth: 2
 
+    - name: Check out base ref
+      run: git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
+
     # Setup
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: $TF_VERSION
+    # - name: Setup Terraform
+    #   uses: hashicorp/setup-terraform@v1
+    #   with:
+    #     terraform_version: $TF_VERSION
 
     - name: Print GitHub Actions env variables
       run: |
@@ -46,7 +50,7 @@ jobs:
         WORKING_DIR=$(git branch)
         echo $WORKING_DIR
 
-        WORKING_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only heads/$GITHUB_HEAD_REF heads/$GITHUB_HEAD_REF~1 | sed -e "s/^/\\//" | egrep -E "\.tf\$|^\/test|^\/pre|^\/pro|^\/all" | grep ".*\/" -o | uniq)
+        WORKING_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only $GITHUB_BASE_REF $GITHUB_HEAD_REF | sed -e "s/^/\\//" | egrep -E "\.tf\$|^\/test|^\/pre|^\/pro|^\/all" | grep ".*\/" -o | uniq)
 
     # - name: Install Terragrunt
     #   run: |
