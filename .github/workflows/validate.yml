@@ -9,7 +9,6 @@ permissions: write-all
 env:
   TG_VERSION: v0.38.6
   TF_VERSION: 1.2.5
-  WORKING_DIR: ""
   TFSEC_VERSION: v1.5.0
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -41,7 +40,7 @@ jobs:
     - name: Print GitHub Actions env variables
       run: |
         WORKING_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF| sed -e "s/^/\\//" | egrep -E "\.tf\$|^\/test|^\/pre|^\/pro|^\/all" | grep ".*\/" -o | uniq)
-        echo $WORKING_DIR
+        echo $WORKING_DIR >> $GITHUB_ENV
 
     # Setup
 
@@ -73,20 +72,20 @@ jobs:
 
     - name: tfsec report
       run: |
-         tfsec $WORKING_DIR --format junit --out tfsec-junit.xml
+         tfsec ${{ env.WORKING_DIR }} --format junit --out tfsec-junit.xml
       shell: bash
       continue-on-error: true
 
     - name: Terragrunt Format
       id: fmt
       run: |
-        echo $WORKING_DIR
-        terragrunt fmt -check -recursive --terragrunt-working-dir $WORKING_DIR -diff
+        echo ${{ env.WORKING_DIR }}
+        terragrunt fmt -check -recursive --terragrunt-working-dir ${{ env.WORKING_DIR }} -diff
       continue-on-error: false
 
     - name: Terragrunt Validate
       id: validate
-      run: terragrunt validate --terragrunt-working-dir $WORKING_DIR 
+      run: terragrunt validate --terragrunt-working-dir ${{ env.WORKING_DIR }} 
       continue-on-error: true
 
     - name: Post Validate
