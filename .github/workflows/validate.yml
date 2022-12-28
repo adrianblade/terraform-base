@@ -34,7 +34,9 @@ jobs:
         fetch-depth: 2
 
     - name: Check out base ref
-      run: git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
+      run: |
+        git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
+        git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
 
     # Setup
 
