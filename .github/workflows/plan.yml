@@ -1,112 +1,112 @@
-name: 'Plan'
+# name: 'Plan'
 
-on:
-  pull_request:
-    types: [opened, reopened, synchronize]
+# on:
+#   pull_request:
+#     types: [opened, reopened, synchronize]
 
-permissions:
-  contents: read
-  pull-requests: write
-env:
-  TG_VERSION: v0.38.6
-  TF_VERSION: 1.2.5
-  CODE_DIR: dev/services/codely-s3
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+# permissions:
+#   contents: read
+#   pull-requests: write
+# env:
+#   TG_VERSION: v0.38.6
+#   TF_VERSION: 1.2.5
+#   CODE_DIR: dev/services/codely-s3
+#   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-jobs:
-  terraform:
-    name: 'Terraform Plan'
-    runs-on: ubuntu-latest
-    environment: production
+# jobs:
+#   terraform:
+#     name: 'Terraform Plan'
+#     runs-on: ubuntu-latest
+#     environment: production
 
-    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
-    defaults:
-      run:
-        shell: bash
+#     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+#     defaults:
+#       run:
+#         shell: bash
 
-    steps:
-    # Checkout the repository to the GitHub Actions runner
-    - name: Checkout
-      uses: actions/checkout@v3
+#     steps:
+#     # Checkout the repository to the GitHub Actions runner
+#     - name: Checkout
+#       uses: actions/checkout@v3
 
-    #Setup
+#     #Setup
 
-    - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
-      with:
-        terraform_version: $TF_VERSION
+#     - name: Setup Terraform
+#       uses: hashicorp/setup-terraform@v1
+#       with:
+#         terraform_version: $TF_VERSION
 
-    - name: Setup Infracost
-      uses: infracost/actions/setup@v2
-      # See https://github.com/infracost/actions/tree/master/setup for other inputs
-      # If you can't use this action, see Docker images in https://infracost.io/cicd
-      with:
-        api-key: ${{ secrets.INFRACOST_API_KEY }}
+#     - name: Setup Infracost
+#       uses: infracost/actions/setup@v2
+#       # See https://github.com/infracost/actions/tree/master/setup for other inputs
+#       # If you can't use this action, see Docker images in https://infracost.io/cicd
+#       with:
+#         api-key: ${{ secrets.INFRACOST_API_KEY }}
       
-    - name: Install Terragrunt
-      run: |
-       curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TG_VERSION/terragrunt_linux_amd64
-       chmod +x terragrunt
-       sudo mv terragrunt /bin
+#     - name: Install Terragrunt
+#       run: |
+#        curl -s -qL -o terragrunt https://github.com/gruntwork-io/terragrunt/releases/download/$TG_VERSION/terragrunt_linux_amd64
+#        chmod +x terragrunt
+#        sudo mv terragrunt /bin
 
-    - name: Verify Terragrunt version
-      run: terragrunt --version
+#     - name: Verify Terragrunt version
+#       run: terragrunt --version
 
-    - name: Verify Terraform version
-      run: terraform --version
+#     - name: Verify Terraform version
+#       run: terraform --version
 
-    #Run      
+#     #Run      
 
-    - name: Terragrunt init
-      run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
+#     - name: Terragrunt init
+#       run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
       
-    - name: Terragrunt plan
-      id: plan
-      run: terragrunt plan --terragrunt-working-dir $CODE_DIR -out workspace.plan
+#     - name: Terragrunt plan
+#       id: plan
+#       run: terragrunt plan --terragrunt-working-dir $CODE_DIR -out workspace.plan
 
-    - name: Post Plan
-      uses: robburger/terraform-pr-commenter@v1
-      with:
-        commenter_type: plan
-        commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
-        commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
+#     - name: Post Plan
+#       uses: robburger/terraform-pr-commenter@v1
+#       with:
+#         commenter_type: plan
+#         commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
+#         commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
 
-    # infracost
+#     # infracost
 
-    # Checkout the base branch of the pull request (e.g. main/master).
-    - name: Checkout base branch
-      uses: actions/checkout@v2
-      with:
-        ref: '${{ github.event.pull_request.base.ref }}'
+#     # Checkout the base branch of the pull request (e.g. main/master).
+#     - name: Checkout base branch
+#       uses: actions/checkout@v2
+#       with:
+#         ref: '${{ github.event.pull_request.base.ref }}'
 
-    # Generate Infracost JSON file as the baseline.
-    - name: Generate Infracost cost estimate baseline
-      run: |
-        infracost breakdown --path=${CODE_DIR} \
-                            --format=json \
-                            --out-file=/tmp/infracost-base.json
+#     # Generate Infracost JSON file as the baseline.
+#     - name: Generate Infracost cost estimate baseline
+#       run: |
+#         infracost breakdown --path=${CODE_DIR} \
+#                             --format=json \
+#                             --out-file=/tmp/infracost-base.json
 
-    # Checkout the current PR branch so we can create a diff.
-    - name: Checkout PR branch
-      uses: actions/checkout@v2
+#     # Checkout the current PR branch so we can create a diff.
+#     - name: Checkout PR branch
+#       uses: actions/checkout@v2
 
-    # Generate an Infracost diff and save it to a JSON file.
-    - name: Generate Infracost diff
-      run: |
-        infracost diff --path=${CODE_DIR} \
-                        --format=json \
-                        --compare-to=/tmp/infracost-base.json \
-                        --out-file=/tmp/infracost.json
-        infracost output --path /tmp/infracost.json --format table --out-file /tmp/report.table
-        cat /tmp/report.table
-    #Post comment
-    - name: Post Infracost comment
-      run: |
-        infracost comment github --path /tmp/infracost.json \
-                                  --repo $GITHUB_REPOSITORY  \
-                                  --github-token ${{ github.token }} \
-                                  --pull-request ${{ github.event.pull_request.number }} \
-                                  --behavior update
+#     # Generate an Infracost diff and save it to a JSON file.
+#     - name: Generate Infracost diff
+#       run: |
+#         infracost diff --path=${CODE_DIR} \
+#                         --format=json \
+#                         --compare-to=/tmp/infracost-base.json \
+#                         --out-file=/tmp/infracost.json
+#         infracost output --path /tmp/infracost.json --format table --out-file /tmp/report.table
+#         cat /tmp/report.table
+#     #Post comment
+#     - name: Post Infracost comment
+#       run: |
+#         infracost comment github --path /tmp/infracost.json \
+#                                   --repo $GITHUB_REPOSITORY  \
+#                                   --github-token ${{ github.token }} \
+#                                   --pull-request ${{ github.event.pull_request.number }} \
+#                                   --behavior update
