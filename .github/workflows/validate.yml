@@ -31,12 +31,12 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v3
       with:
-        ref: ${{ github.head_ref }}
         fetch-depth: 2
 
     - name: Check out base ref
       run: |
         git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
+        git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
 
     # Setup
 
@@ -47,11 +47,7 @@ jobs:
 
     - name: Print GitHub Actions env variables
       run: |
-        echo "Ensure we can view $GITHUB_HEAD_REF"
-        git checkout $GITHUB_HEAD_REF
-        echo "Ensure we can view $GITHUB_BASE_REF"
-        git checkout $GITHUB_BASE_REF
-        WORKING_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only $GITHUB_BASE_REF $GITHUB_HEAD_REF)
+        WORKING_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only $GITHUB_BASE_REF $GITHUB_HEAD_REF | sed -e "s/^/\\//" | egrep -E "\.tf\$|^\/test|^\/pre|^\/pro|^\/all" | grep ".*\/" -o | uniq)
         echo $WORKING_DIR
     # - name: Install Terragrunt
     #   run: |
