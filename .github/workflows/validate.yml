@@ -46,7 +46,7 @@ jobs:
         WORKING_DIR=$(git branch)
         echo $WORKING_DIR
 
-        WORKING_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only $GITHUB_REF $GITHUB_REF~1 | sed -e "s/^/\\//" | egrep -E "\.tf\$|^\/test|^\/pre|^\/pro|^\/all" | grep ".*\/" -o | uniq)
+        WORKING_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only pull/14/merge pull/14/merge~1 | sed -e "s/^/\\//" | egrep -E "\.tf\$|^\/test|^\/pre|^\/pro|^\/all" | grep ".*\/" -o | uniq)
 
     # - name: Install Terragrunt
     #   run: |
