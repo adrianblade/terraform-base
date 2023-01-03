@@ -72,11 +72,11 @@ jobs:
     #Run      
 
     - name: Terragrunt init
-      run: terragrunt init -input=false -reconfigure --terragrunt-working-dir pre/adri
+      run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ env.WORKING_DIR }}
       
     - name: Terragrunt plan
       id: plan
-      run: terragrunt plan --terragrunt-working-dir pre/adri -out workspace.plan
+      run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan
 
     - name: Post Plan
       uses: robburger/terraform-pr-commenter@v1
@@ -88,15 +88,15 @@ jobs:
     # infracost
 
     # Checkout the base branch of the pull request (e.g. main/master).
-    - name: Checkout base branch
-      uses: actions/checkout@v2
-      with:
-        ref: '${{ github.event.pull_request.base.ref }}'
+    # - name: Checkout base branch
+    #   uses: actions/checkout@v2
+    #   with:
+    #     ref: '${{ github.event.pull_request.base.ref }}'
 
     # Generate Infracost JSON file as the baseline.
     - name: Generate Infracost cost estimate baseline
       run: |
-        infracost breakdown --path=pre/adri \
+        infracost breakdown --path=${{ env.WORKING_DIR }} \
                             --format=json \
                             --out-file=/tmp/infracost-base.json
 
@@ -107,7 +107,7 @@ jobs:
     # Generate an Infracost diff and save it to a JSON file.
     - name: Generate Infracost diff
       run: |
-        infracost diff --path=pre/adri \
+        infracost diff --path=${{ env.WORKING_DIR }} \
                         --format=json \
                         --compare-to=/tmp/infracost-base.json \
                         --out-file=/tmp/infracost.json
