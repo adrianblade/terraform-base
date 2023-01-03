@@ -88,10 +88,10 @@ jobs:
     # infracost
 
     # Checkout the base branch of the pull request (e.g. main/master).
-    # - name: Checkout base branch
-    #   uses: actions/checkout@v2
-    #   with:
-    #     ref: '${{ github.event.pull_request.base.ref }}'
+    - name: Checkout base branch
+      uses: actions/checkout@v2
+      with:
+        ref: '${{ github.event.pull_request.base.ref }}'
 
     # Generate Infracost JSON file as the baseline.
     - name: Generate Infracost cost estimate baseline
@@ -99,6 +99,7 @@ jobs:
         infracost breakdown --path=${{ env.WORKING_DIR }} \
                             --format=json \
                             --out-file=/tmp/infracost-base.json
+      continue-on-error: true
 
     # Checkout the current PR branch so we can create a diff.
     - name: Checkout PR branch
