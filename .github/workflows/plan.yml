@@ -104,7 +104,7 @@ jobs:
 
     # Generate 0€ Infracost JSON file if working_dir doesn't exists previously
     - name: Generate Infracost cost 0€ report
-      run: touch /tmp/infracost-base.json
+      run: echo "{}" >> /tmp/infracost-base.json
       if: steps.infracost-baseline.outcome != 'success'
 
     # Checkout the current PR branch so we can create a diff.
