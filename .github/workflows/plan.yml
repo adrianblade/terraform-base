@@ -88,10 +88,10 @@ jobs:
     # infracost
 
     # # Checkout the base branch of the pull request (e.g. main/master).
-    # - name: Checkout base branch
-    #   uses: actions/checkout@v2
-    #   with:
-    #     ref: '${{ github.event.pull_request.base.ref }}'
+    - name: Checkout base branch
+      uses: actions/checkout@v2
+      with:
+        ref: '${{ github.event.pull_request.base.ref }}'
 
     # Generate Infracost JSON file as the baseline.
     - name: Generate Infracost cost estimate baseline
@@ -102,10 +102,14 @@ jobs:
                             --out-file=/tmp/infracost-base.json
       continue-on-error: true
 
-    # # Generate 0€ Infracost JSON file if working_dir doesn't exists previously
-    # - name: Generate Infracost cost 0€ report
-    #   run: echo "{}" >> /tmp/infracost-base.json
-    #   if: steps.infracost-baseline.outcome != 'success'
+    # Generate 0€ Infracost JSON file if working_dir doesn't exists previously
+    - name: Generate Infracost cost 0€ report
+      run: |
+        touch ${{ env.WORKING_DIR }}/main.tf
+        infracost breakdown --path=${{ env.WORKING_DIR }} \
+                            --format=json \
+                            --out-file=/tmp/infracost-base.json
+      if: steps.infracost-baseline.outcome != 'success'
 
     # Checkout the current PR branch so we can create a diff.
     - name: Checkout PR branch
