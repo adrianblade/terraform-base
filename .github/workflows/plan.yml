@@ -105,7 +105,8 @@ jobs:
     # Generate 0€ Infracost JSON file if working_dir doesn't exists previously
     - name: Generate Infracost cost 0€ report
       run: |
-        touch ${{ env.WORKING_DIR }}/main.tf
+        mkdir -p ${{ env.WORKING_DIR }}
+        touch ${{ env.WORKING_DIR }}main.tf
         infracost breakdown --path=${{ env.WORKING_DIR }} \
                             --format=json \
                             --out-file=/tmp/infracost-base.json
