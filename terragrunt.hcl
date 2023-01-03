@@ -37,7 +37,6 @@ generate "provider" {
 # Any changes here will be lost.
 
 provider "aws" {
-  alias  = "mango-test-ireland"
   region = "eu-west-1"
 }
 
