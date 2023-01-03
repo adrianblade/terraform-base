@@ -72,11 +72,11 @@ jobs:
     #Run      
 
     - name: Terragrunt init
-      run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ env.WORKING_DIR }}
+      run: terragrunt init -input=false -reconfigure --terragrunt-working-dir pre/adri
       
     - name: Terragrunt plan
       id: plan
-      run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan
+      run: terragrunt plan --terragrunt-working-dir pre/adri -out workspace.plan
 
     - name: Post Plan
       uses: robburger/terraform-pr-commenter@v1
