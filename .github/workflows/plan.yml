@@ -103,14 +103,14 @@ jobs:
       continue-on-error: true
 
     # Generate 0€ Infracost JSON file if working_dir doesn't exists previously
-    - name: Generate Infracost cost 0€ report
-      run: |
-        mkdir -p ${{ env.WORKING_DIR }}
-        touch ${{ env.WORKING_DIR }}main.tf
-        infracost breakdown --path=${{ env.WORKING_DIR }} \
-                            --format=json \
-                            --out-file=/tmp/infracost-base.json
-      if: steps.infracost-baseline.outcome != 'success'
+    # - name: Generate Infracost cost 0€ report
+    #   run: |
+    #     mkdir -p ${{ env.WORKING_DIR }}
+    #     touch ${{ env.WORKING_DIR }}main.tf
+    #     infracost breakdown --path=${{ env.WORKING_DIR }} \
+    #                         --format=json \
+    #                         --out-file=/tmp/infracost-base.json
+    #   if: steps.infracost-baseline.outcome != 'success'
 
     # Checkout the current PR branch so we can create a diff.
     - name: Checkout PR branch
