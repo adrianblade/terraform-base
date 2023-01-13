@@ -10,7 +10,6 @@ permissions:
 env:
   TG_VERSION: v0.38.6
   TF_VERSION: 1.2.5
-  CODE_DIR: dev/services/codely-s3
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
@@ -31,11 +30,23 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 2
+
+    - name: Check out base ref
+      run: |
+        git fetch --no-tags --depth=1 origin $GITHUB_BASE_REF
+        git fetch --no-tags --depth=1 origin $GITHUB_HEAD_REF
+
+    - name: Get working directory
+      run: |
+        CODE_DIR=$(git --no-pager diff --diff-filter=d --raw --name-only origin/$GITHUB_BASE_REF origin/$GITHUB_HEAD_REF | egrep -E "\.tf\$|^\/test|^\/pre|^\/pro|^\/all" | grep ".*\/" -o | uniq)
+        echo "WORKING_DIR=$CODE_DIR" >> $GITHUB_ENV
 
     #Setup
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v1
+      uses: hashicorp/setup-terraform@v2.0.3
       with:
         terraform_version: $TF_VERSION
 
@@ -61,11 +72,11 @@ jobs:
     #Run      
 
     - name: Terragrunt init
-      run: terragrunt init -input=false -reconfigure --terragrunt-working-dir $CODE_DIR
+      run: terragrunt init -input=false -reconfigure --terragrunt-working-dir ${{ env.WORKING_DIR }}
       
     - name: Terragrunt plan
       id: plan
-      run: terragrunt plan --terragrunt-working-dir $CODE_DIR -out workspace.plan
+      run: terragrunt plan --terragrunt-working-dir ${{ env.WORKING_DIR }} -out workspace.plan
 
     - name: Post Plan
       uses: robburger/terraform-pr-commenter@v1
@@ -76,7 +87,7 @@ jobs:
 
     # infracost
 
-    # Checkout the base branch of the pull request (e.g. main/master).
+    # # Checkout the base branch of the pull request (e.g. main/master).
     - name: Checkout base branch
       uses: actions/checkout@v2
       with:
@@ -84,19 +95,23 @@ jobs:
 
     # Generate Infracost JSON file as the baseline.
     - name: Generate Infracost cost estimate baseline
+      id: infracost-baseline
       run: |
-        infracost breakdown --path=${CODE_DIR} \
+        mkdir -p ${{ env.WORKING_DIR }}
+        touch ${{ env.WORKING_DIR }}main.tf
+        infracost breakdown --path=${{ env.WORKING_DIR }} \
                             --format=json \
                             --out-file=/tmp/infracost-base.json
+                            --terraform-force-cli
 
     # Checkout the current PR branch so we can create a diff.
     - name: Checkout PR branch
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     # Generate an Infracost diff and save it to a JSON file.
     - name: Generate Infracost diff
       run: |
-        infracost diff --path=${CODE_DIR} \
+        infracost diff --path=${{ env.WORKING_DIR }} \
                         --format=json \
                         --compare-to=/tmp/infracost-base.json \
                         --out-file=/tmp/infracost.json
